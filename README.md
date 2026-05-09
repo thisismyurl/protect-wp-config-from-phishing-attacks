@@ -12,3 +12,8 @@ Maintenance mode. Plugin is open for adoption — see WordPress.org listing.
 
 ## License
 GPL v2 or later.
+
+
+---
+*This project follows the [10 Core Pillars](PILLARS.md). Support quality work [here](https://github.com/sponsors/thisismyurl).*
+
