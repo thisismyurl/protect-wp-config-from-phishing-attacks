@@ -1,100 +1,63 @@
 <?php
-/*
-Plugin Name: Protect wp-config.php from Phishing Attacks
-Plugin URI: http://thisismyurl.com/downloads/protect-wp-config-from-phishing-attacks/
-Description: Returns a blank white page if people try to load the wp-config file (or backups of it) in a web browser. 
-Author: Christopher Ross
-Author URI: http://thisismyurl.com/
-Version: 15.01
-*/
-
-
 /**
- * Protect wp-config.php from Phishing Attacks core file
+ * Plugin Name:       Protect wp-config.php from Phishing Attacks
+ * Plugin URI:        https://thisismyurl.com/plugins/protect-wp-config-from-phishing-attacks/
+ * Description:       Returns a 403 Forbidden response if the request URI contains "wp-config" outside the admin context. Protects wp-config.php and its backup variants from direct HTTP requests.
+ * Version:           16.0.0
+ * Requires at least: 6.4
+ * Requires PHP:      7.4
+ * Author:            Christopher Ross
+ * Author URI:        https://thisismyurl.com/
+ * License:           GPL-2.0-or-later
+ * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain:       protect-wp-config-from-phishing-attacks
  *
- * This file contains all the logic required for the plugin
- *
- * @link		http://wordpress.org/extend/plugins/protect-wp-config-from-phishing-attacks/
- *
- * @package 	Protect wp-config.php from Phishing Attacks
- * @copyright	Copyright (c) 2008, Chrsitopher Ross
- * @license		http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU General Public License, v2 (or newer)
- *
- * @since 		Protect wp-config.php from Phishing Attacks 1.0
+ * @package ThisIsMyURL\ProtectWPConfig
  */
 
+declare( strict_types=1 );
 
+namespace ThisIsMyURL\ProtectWPConfig;
 
+defined( 'ABSPATH' ) || exit;
 
-/* if the plugin is called directly, die */
-if ( ! defined( 'WPINC' ) )
-	die;
-	
-	
-define( 'THISISMYURL_PWPC_NAME', 'Protect wp-config.php from Phishing Attacks ' );
-define( 'THISISMYURL_PWPC_SHORTNAME', 'Protect wp-config' );
-
-define( 'THISISMYURL_PWPC_FILENAME', plugin_basename( __FILE__ ) );
-define( 'THISISMYURL_PWPC_FILEPATH', dirname( plugin_basename( __FILE__ ) ) );
-define( 'THISISMYURL_PWPC_FILEPATHURL', plugin_dir_url( __FILE__ ) );
-
-define( 'THISISMYURL_PWPC_NAMESPACE', basename( THISISMYURL_PWPC_FILENAME, '.php' ) );
-define( 'THISISMYURL_PWPC_TEXTDOMAIN', str_replace( '-', '_', THISISMYURL_PWPC_NAMESPACE ) );
-
-define( 'THISISMYURL_PWPC_VERSION', '15.01' );
-
-include_once( 'thisismyurl-common.php' );
-
-
+const VERSION = '16.0.0';
 
 /**
- * Creates the class required for ProtectWPConfig
+ * Intercept any request whose URI contains "wp-config" outside the admin.
  *
- * @author     Christopher Ross <info@thisismyurl.com>
- * @version    Release: @15.01@
- * @see        wp_enqueue_scripts()
- * @since      Class available since Release 15.01
+ * WordPress is already loaded when plugins run, so wp-config.php is never
+ * served directly by PHP in a healthy install. This hook is a belt-and-
+ * suspenders guard against misconfigured servers or file-inclusion attacks
+ * that somehow route a request through the WP bootstrap.
  *
+ * Hook: init — runs early enough to abort before any output is sent but
+ * after WordPress has set up the request context.
  */
-if( ! class_exists( 'thissimyurl_ProtectWPConfig' ) ) {
-class thissimyurl_ProtectWPConfig extends thisismyurl_Common_PWPC {
+function block_wp_config_request(): void {
+	$request_uri = isset( $_SERVER['REQUEST_URI'] )
+		? sanitize_text_field( wp_unslash( (string) $_SERVER['REQUEST_URI'] ) )
+		: '';
 
-	/**
-	  * Standard Constructor
-	  *
-	  * @access public
-	  * @static
-	  * @uses http://codex.wordpress.org/Function_Reference/add_action
-	  * @since Method available since Release 15.01
-	  *
-	  */
-	public function run() {
-		add_filter( 'init', array( $this, 'wp_config_request' ) );
+	if ( '' === $request_uri ) {
+		return;
 	}
-	
-	
-	/**
-	  * wp_config_request
-	  *
-	  * @access public
-	  * @static
-	  * @since Method available since Release 15.01
-	  *
-	  * @todo figure out how to call this dynamically from within an enqueue function
-	  *
-	  */
-	function wp_config_request() {
-  
-	  $url = 'http://' . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];	
-		
-	  if ( substr_count( $url , 'wp-config' ) > 0 && substr( $url, -1 ) != '/' && ! is_admin() )
-		die();
-		
+
+	// Only act on requests that contain "wp-config" in the path.
+	if ( false === strpos( $request_uri, 'wp-config' ) ) {
+		return;
 	}
-	
-}
-}
 
-$thissimyurl_ProtectWPConfig = new thissimyurl_ProtectWPConfig;
+	// Never interfere with wp-admin requests — admins legitimately access
+	// paths that contain "wp-config" in some security/file-manager plugins.
+	if ( is_admin() ) {
+		return;
+	}
 
-$thissimyurl_ProtectWPConfig->run();
+	wp_die(
+		esc_html__( 'Access to this file is forbidden.', 'protect-wp-config-from-phishing-attacks' ),
+		esc_html__( 'Forbidden', 'protect-wp-config-from-phishing-attacks' ),
+		array( 'response' => 403 )
+	);
+}
+add_action( 'init', __NAMESPACE__ . '\\block_wp_config_request', 1 );

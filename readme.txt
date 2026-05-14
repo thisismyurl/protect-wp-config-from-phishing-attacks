@@ -4,7 +4,7 @@ Plugin URI: http://thisismyurl.com/downloads/protect-wp-config-from-phishing-att
 Donate link: http://thisismyurl.com/downloads/
 Tags: wp-config, security, phishing attacks, protect, config file,adopt-me
 Requires at least: 3.2.0
-Tested up to: 4.1.0
+Tested up to: 6.9
 Stable tag: 15.01
 
 Returns a blank white page if people try to load the wp-config file (or backups of it) in a web browser.
