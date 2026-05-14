@@ -1,71 +1,65 @@
 === Protect WP Config File from Phishing Attacks ===
 Contributors: christopherross
-Plugin URI: http://thisismyurl.com/downloads/protect-wp-config-from-phishing-attacks/
-Donate link: http://thisismyurl.com/downloads/
-Tags: wp-config, security, phishing attacks, protect, config file,adopt-me
-Requires at least: 3.2.0
+Plugin URI: https://thisismyurl.com/plugins/protect-wp-config-from-phishing-attacks/
+Tags: wp-config, security, hardening, phishing, config
+Requires at least: 6.4
 Tested up to: 6.9
-Stable tag: 15.01
+Requires PHP: 7.4
+Stable tag: 16.0.0
+License: GPL-2.0-or-later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Returns a blank white page if people try to load the wp-config file (or backups of it) in a web browser.
+Returns a 403 response when requests target wp-config-style paths.
 
 == Description ==
 
-** this plugin is no longer being update. Please feel free to adopt me! **
+Protect WP Config File from Phishing Attacks blocks direct HTTP requests that include `wp-config` in the request URI.
 
+This helps reduce exposure from misconfigured servers where config backups (`wp-config.php.bak`, `.old`, etc.) could be requested directly.
 
+Plugin behavior:
 
-
-Returns a blank white page if people try to load the wp-config file (or backups of it) in a web browser.
-
-This plugin is maintained by Christopher Ross, http://thisismyurl.com/ or you can find him on Twitter at http://twitter.com/thisismyurl/
+* Runs early on `init`
+* Sanitizes incoming request URI before checks
+* Returns a `403 Forbidden` response for blocked requests
+* Leaves `wp-admin` traffic untouched
 
 == Installation ==
 
-1. Upload the full folder to the /wp-content/plugins/ directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-
-== Updates ==
-
-Updates to the plugin will be posted here, to http://thisismyurl.com/downloads/protect-wp-config-from-phishing-attacks/
+1. Upload the plugin folder to `/wp-content/plugins/`.
+2. Activate it through **Plugins > Installed Plugins**.
+3. No settings are required.
 
 == Frequently Asked Questions ==
 
-= Questions =
+= Does this modify wp-config.php? =
 
-There have been no questions, please feel free to ask questions in the WordPress.org forums.
+No. It only inspects incoming request URIs and blocks suspicious direct access attempts.
 
-== Donations ==
+= Will this affect admin access? =
 
-If you would like to donate to help support future development of this tool, please make a donation via http://thisismyurl.com/downloads/
+No. Requests in admin context are bypassed.
 
-== Change Log ==
+== Changelog ==
 
+= 16.0.0 =
+* Complete modernization with namespace and strict types.
+* Removed legacy `thisismyurl-common.php` dependency.
+* Added sanitized request handling using `sanitize_text_field( wp_unslash() )`.
+* Standardized 403 responses via `wp_die()`.
+* Added modern plugin headers and SPDX license metadata.
 
 = 15.01 =
+* Legacy maintenance release.
 
-* moved CSS to child directories
-* added information page for plugin
-* tested for WordPress 4.1
-* removed icon file
-* Added OOP Class structure
-* Migrated common structure for plugins
-
-= 1.0.0 (2013-07-04) =
-
-* Official release as a full, stable plugin.
+= 1.0.0 =
+* Initial release.
 
 == Upgrade Notice ==
 
-= 1.1.0 =
-
-* disabled checking if logged in and in the admin section
-
-= 1.0.0 =
-
-* Official release as a full, stable plugin.
-
+= 16.0.0 =
+Major internal refactor with no settings migration required.
 
 == Screenshots ==
 
-None
+1. No UI screens. This plugin runs silently in the background.

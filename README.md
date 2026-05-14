@@ -7,11 +7,17 @@ Returns a blank page if anyone tries to load `wp-config.php` (or common backup n
 ## Why this exists
 Server misconfigurations sometimes serve `.bak`/`.old` copies of `wp-config.php` as plain text — leaking the database password and authentication keys. This plugin defensively returns a blank response for any direct-load attempt against config-file paths.
 
+## Current implementation
+- Namespaced plugin (`ThisIsMyURL\\ProtectWPConfig`) with `declare(strict_types=1)`
+- Sanitized `REQUEST_URI` checks using WordPress sanitization helpers
+- Returns a `403 Forbidden` response via `wp_die()`
+- Legacy `thisismyurl-common.php` scaffold removed
+
 ## Status
-Maintenance mode. Plugin is open for adoption — see WordPress.org listing.
+Maintained and modernized for current WordPress/PHP baselines.
 
 ## License
-GPL v2 or later.
+GPL-2.0-or-later.
 
 
 ---
