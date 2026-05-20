@@ -13,6 +13,8 @@ Returns a 403 response when requests target wp-config-style paths.
 
 == Description ==
 
+ARCHIVED: This plugin is no longer actively maintained. It is provided as-is for legacy installs, and active support/testing is not guaranteed.
+
 Protect WP Config File from Phishing Attacks blocks direct HTTP requests that include `wp-config` in the request URI.
 
 This helps reduce exposure from misconfigured servers where config backups (`wp-config.php.bak`, `.old`, etc.) could be requested directly.
