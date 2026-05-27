@@ -3,9 +3,9 @@ Contributors: christopherross
 Plugin URI: https://thisismyurl.com/plugins/protect-wp-config-from-phishing-attacks/
 Tags: wp-config, security, hardening, phishing, config
 Requires at least: 6.4
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 16.0.0
+Stable tag: 16.6147
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,6 @@ Returns a 403 response when requests target wp-config-style paths.
 
 == Description ==
 
-ARCHIVED: This plugin is no longer actively maintained. It is provided as-is for legacy installs, and active support/testing is not guaranteed.
 
 Protect WP Config File from Phishing Attacks blocks direct HTTP requests that include `wp-config` in the request URI.
 
@@ -43,6 +42,11 @@ No. It only inspects incoming request URIs and blocks suspicious direct access a
 No. Requests in admin context are bypassed.
 
 == Changelog ==
+
+= 16.6147 =
+* Unified plugin versioning to the x.Yddd calendar-version scheme.
+* Confirmed compatibility with WordPress 7.0.
+
 
 = 16.0.0 =
 * Complete modernization with namespace and strict types.
