@@ -3,7 +3,7 @@
  * Plugin Name:       Protect wp-config.php from Phishing Attacks
  * Plugin URI:        https://thisismyurl.com/plugins/protect-wp-config-from-phishing-attacks/
  * Description:       Returns a 403 Forbidden response to WordPress-routed front-end requests that target a config filename (wp-config.php and common backup variants). Does NOT block static files served directly by the webserver — pair it with a server, .htaccess, or edge rule for that. See readme.
- * Version:           16.6147
+ * Version:           16.6148.2110
  * Requires at least: 6.4
  * Requires PHP:      7.4
  * Author:            Christopher Ross
