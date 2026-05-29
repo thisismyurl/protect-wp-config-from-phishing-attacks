@@ -2,18 +2,22 @@
 
 [![WordPress](https://img.shields.io/badge/WordPress-6.4%2B-blue)](https://wordpress.org/plugins/protect-wp-config-from-phishing-attacks/) [![License](https://img.shields.io/badge/License-GPL--2.0-blue)](LICENSE)
 
-Returns a blank page if anyone tries to load `wp-config.php` (or common backup names like `wp-config.php.bak` and `wp-config.php.old`) directly in a web browser. A small but commonly needed hardening layer.
+Returns a `403 Forbidden` to WordPress-routed front-end requests whose resolved path targets a config filename (`wp-config.php` and common backup variants like `wp-config.php.bak` and `wp-config.php.old`). A small, focused hardening layer that pairs with a server or edge rule.
 
 ## Why this exists
 
-Server misconfigurations sometimes serve `.bak` or `.old` copies of `wp-config.php` as plain text, which leaks the database password and authentication keys. This plugin defensively returns a blank response for any direct-load attempt against config-file paths.
+Server misconfigurations sometimes serve `.bak` or `.old` copies of `wp-config.php` as plain text, which leaks the database password and authentication keys. This plugin blocks the slice of that threat it can actually see — requests routed through the WordPress bootstrap whose path basename is a config filename.
+
+## What this does NOT protect against
+
+This plugin only runs once WordPress has loaded. A direct request for a **static** `wp-config.php.bak` that the webserver serves from disk never reaches PHP, so the plugin cannot block it. Close that gap with a server, `.htaccess`, or CDN/edge rule (examples are in [readme.txt](readme.txt)), and keep config backups out of the web root entirely.
 
 ## Current implementation
 
 - Namespaced plugin (`ThisIsMyURL\ProtectWPConfig`) with `declare(strict_types=1)`
-- Sanitised `REQUEST_URI` checks using WordPress sanitisation helpers
+- Matches the **basename of the resolved request path** against a config-filename pattern, not a substring of the URL — so legitimate content like `/how-to-edit-wp-config-php/` is never blocked
 - Returns a `403 Forbidden` response via `wp_die()`
-- Legacy `thisismyurl-common.php` scaffold removed
+- Stores no options and creates no database tables
 
 ## Requirements
 
