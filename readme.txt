@@ -52,7 +52,7 @@ Nginx (server block):
 `location ~* ^/wp-config\.(php|txt)(\.(bak|old|save|orig|backup))?$ { deny all; }`
 
 A CDN/edge (Cloudflare, etc.) WAF rule blocking the same paths works too,
-and is the most robust layer because it stops the request before it reaches
+and is the strongest layer because it stops the request before it reaches
 the origin at all.
 
 The most reliable fix of all is to never leave config backups in the web
